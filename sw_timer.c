@@ -9,25 +9,25 @@
 typedef struct SW_TIMER
 {
 	// A timer relative time
-    uint32_t time;
+	uint32_t time;
 
-    // A timer period
-    uint32_t period;
+	// A timer period
+	uint32_t period;
 
-    // A timer mode of operations
-    uint32_t mode;
+	// A timer mode of operations
+	uint32_t mode;
 
-    //
-    sw_timer_func_ptr_t callback;
+	// A pointer to the callback function
+	sw_timer_func_ptr_t callback;
 
-    //
-    sw_timer_arg_ptr_t arg;
+	// A pointer to the callback argument
+	sw_timer_arg_ptr_t arg;
 
-    // A pointer to the next node
-    struct SW_TIMER *next;
+	// A pointer to the next node
+	struct SW_TIMER *next;
 
-    // A pointer to the previous node
-    struct SW_TIMER *prev;
+	// A pointer to the previous node
+	struct SW_TIMER *prev;
 } sw_timer_t;
 
 /**
@@ -215,7 +215,7 @@ void sw_timer_interrupt_handler()
 
 	while (this->head && (this->head->time == time)) {
 		void (*callback)(void* arg) = this->head->callback;
-		void* arg = this->head->arg;
+		void * arg = this->head->arg;
 
 		if (this->head->mode == SW_TIMER_MODE_SINGLE_SHOT) {
 			this->head->time = 0;
