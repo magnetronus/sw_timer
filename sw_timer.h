@@ -158,34 +158,34 @@ void sw_timer_register_physical_sw_timer_callbacks(
  *
  * void main( void )
  * {
- * 		// Return status code for software timer
- * 		sw_timer_status_t status;
+ *	// Return status code for software timer
+ *	sw_timer_status_t status;
  *
- * 		// Software timer handle
- * 		sw_timer_handle_t timer;
+ *	// Software timer handle
+ *	sw_timer_handle_t timer;
  *
- * 		// Memory static allocation for software timer
- * 		sw_timer_buffer_t sw_timer_buffer;
+ *	// Memory static allocation for software timer
+ *	sw_timer_buffer_t sw_timer_buffer;
  *
- *		// Read PRIMASK register, check interrupt status before you disable them
- *		// Returns 0 if they are enabled, or non-zero if disabled
- *		uint32_t prim = __get_PRIMASK();
+ *	// Read PRIMASK register, check interrupt status before you disable them
+ *	// Returns 0 if they are enabled, or non-zero if disabled
+ *	uint32_t prim = __get_PRIMASK();
  *
- *		// Disable interrupts
- *		__disable_irq();
+ *	// Disable interrupts
+ *	__disable_irq();
  *
- * 		timer = sw_timer_create(SW_TIMER_CONV_MILLISECONDS_TO_TICKS(500), SW_TIMER_MODE_SINGLE_SHOT, &callback_func, NULL, &sw_timer_buffer);
+ *	timer = sw_timer_create(SW_TIMER_CONV_MILLISECONDS_TO_TICKS(500), SW_TIMER_MODE_SINGLE_SHOT, &callback_func, NULL, &sw_timer_buffer);
  *
- *		status = sw_timer_start(timer);
+ *	status = sw_timer_start(timer);
  *
- *		status = sw_timer_update(timer, SW_TIMER_CONV_MILLISECONDS_TO_TICKS(100), SW_TIMER_MODE_REPEATING, &callback_func, NULL);
+ *	status = sw_timer_update(timer, SW_TIMER_CONV_MILLISECONDS_TO_TICKS(100), SW_TIMER_MODE_REPEATING, &callback_func, NULL);
  *
- *		status = sw_timer_stop(timer);
+ *	status = sw_timer_stop(timer);
  *
- *		// Enable interrupts back
- * 		if (!prim) {
- *      	__enable_irq();
- *  	}
+ *	// Enable interrupts back
+ *	if (!prim) {
+ *		__enable_irq();
+ *	}
  * }
  * @endverbatim
  */
