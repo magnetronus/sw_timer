@@ -45,6 +45,18 @@ sw_timer_private_members_t private_members = { NULL, NULL, NULL };
 sw_timer_private_members_t *this = &private_members;
 
 /**
+ * @brief Update relative time.
+ *
+ * If new time greater than 0x80000000, than need reset relative time for
+ * all timers in doubly linked list.
+ *
+ * @param timer The pointer to timer than need be updated.
+ *
+ * @param delta The time than need add to relative time.
+ */
+static void sw_timer_update_relative_time(sw_timer_t* timer, uint32_t delta);
+
+/**
  * @brief Insert timer to doubly linked list function.
  *
  * @param timer The pointer to doubly linked list.
@@ -136,9 +148,11 @@ sw_timer_status_t sw_timer_start(sw_timer_handle_t timer)
 				status = SW_TIMER_STATUS_ERROR_PHYSICAL_TIMER_CALLBACKS_NOT_REGISTERED;
 		} else {
 			if ((this->set_physical_timer != NULL) && (this->get_physical_sw_timer_counter != NULL)) {
-				((sw_timer_t *) timer)->time = this->head->time
+				sw_timer_update_relative_time(
+						(sw_timer_t *) timer,
+						this->head->time
 						- this->get_physical_sw_timer_counter()
-						+ ((sw_timer_t *) timer)->period;
+						+ ((sw_timer_t *) timer)->period);
 
 				if (((sw_timer_t *) timer)->time < this->head->time) {
 					/* Restart physical timer */
@@ -231,7 +245,7 @@ void sw_timer_interrupt_handler()
 				this->head = NULL;
 			}
 		} else if (this->head->mode == SW_TIMER_MODE_REPEATING) {
-			this->head->time += this->head->period;
+			sw_timer_update_relative_time(this->head, this->head->period);
 
 			if ((this->head->next != NULL) && (this->head->time > this->head->next->time)) {
 				this->head = this->head->next;
@@ -258,6 +272,23 @@ void sw_timer_interrupt_handler()
 		if (callback != NULL)
 			callback(arg);
 	}
+}
+
+static void sw_timer_update_relative_time(sw_timer_t* timer, uint32_t delta)
+{
+	if (((timer->time + delta) && 0x80000000) != 0) {
+		sw_timer_t* _timer = this->head;
+
+		uint32_t shift_time = _timer->time - this->get_physical_sw_timer_counter();
+
+		while (_timer) {
+			_timer->time -= shift_time;
+
+			_timer = _timer->next;
+		}
+	}
+
+	timer->time += delta;
 }
 
 static void sw_timer_insert(sw_timer_t* timer, sw_timer_t* new_timer)
