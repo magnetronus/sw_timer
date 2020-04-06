@@ -47,8 +47,8 @@ sw_timer_private_members_t *this = &private_members;
 /**
  * @brief Update relative time.
  *
- * If new time greater than 0x80000000, than need reset relative time for
- * all timers in doubly linked list.
+ * If relative time should be greater or equal to 0x80000000, than need
+ * reset relative time for all timers.
  *
  * @param timer The pointer to timer than need be updated.
  *
